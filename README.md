@@ -46,7 +46,6 @@ Time to initialize the Kubernetes.
 The --pod-network-cidr range used for Cilium is 10.1.1.0/24.
 
 ```sh
-COPY
 sudo kubeadm init --pod-network-cidr=10.1.1.0/24 --apiserver-advertise-address <Ip_master_Machine>
 ```
 

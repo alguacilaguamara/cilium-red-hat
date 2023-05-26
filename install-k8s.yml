@@ -1,29 +1,23 @@
 - hosts: localhost
   tasks:
-  - name: Load cryo repo
+  - name: Load cri-o repo
     shell: |
       VERSION=1.25
       OS=CentOS_8
       curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/devel:kubic:libcontainers:stable.repo
       curl -L -o /etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$VERSION/$OS/devel:kubic:libcontainers:stable:cri-o:$VERSION.repo
 
-  - name: Install cri-o 
+  - name: Install cri-o
     yum:
       name:
         - "cri-o"
         - "cri-tools"
       state: present
 
-  - name: Start cri-o 
-    shell: |
-      systemctl daemon-reload
-      systemctl enable crio --now
-      systemctl enable kubelet --now
-
   - name: Adding repository details in Kubernetes repo file.
     blockinfile:
      path: /etc/yum.repos.d/kubernetes.repo
-     block: |     
+     block: |
       [kubernetes]
       name=Kubernetes
       baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -31,6 +25,20 @@
       gpgcheck=1
       repo_gpgcheck=1
       gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+  - name: Install kubeadm kubelet kubectl
+    yum:
+      name:
+        - kubeadm
+        - kubelet
+        - kubectl
+      state: present
+
+  - name: Start cri-o
+    shell: |
+      systemctl daemon-reload
+      systemctl enable crio --now
+      systemctl enable kubelet --now
 
   - name: Create disable swap fstab
     shell: line=$(grep -n -m 1 swap /etc/fstab | cut -d ":" -f 1) && sed -e "${line}s/^/#/" /etc/fstab > /etc/fstab.bk
@@ -46,14 +54,6 @@
 
   - name: disable firewall
     shell: systemctl stop firewalld && systemctl disable firewalld && systemctl mask --now firewalld
-
-  - name: Install kubeadm kubelet kubectl
-    yum:
-      name: 
-        - kubeadm 
-        - kubelet
-        - kubectl
-      state: present 
 
   - name: Enable systemctl enable kubelet.service
     shell: systemctl enable kubelet.service

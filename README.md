@@ -16,34 +16,24 @@ Now you can start the nodes defined on the Vagranfile
 
 ```sh
 sudo su
-vagrant up master
-vagrant up node1
+vagrant up
 ```
 
-## Installation of Kubernetes inside the machines
-
-First step is connect via ssh with the machine. If you are using vagrant
-
+Now we can connect to node1 and node2
 ```sh
-vagrant ssh master
-
-sudo yum install epel-release -y
-sudo yum install yum-utils -y
-sudo yum install ansible -y
+vagrant ssh node1
 ```
 
-Now you need to copy install-k8s.yml inside the machine. Then it's time to exec the ansible script:
-
+And in another terminal:
 ```sh
 sudo su
-ansible-playbook install.yml
+vagrant ssh node2
 ```
 
-Now Kubernetes is installed.
 
 # Init Kubernetes and installation of cilium
 Time to initialize the Kubernetes. 
-The --pod-network-cidr range used for Cilium is 10.1.1.0/24.
+Important: The --pod-network-cidr range used for Cilium is 10.1.1.0/24.
 
 ```sh
 sudo kubeadm init --pod-network-cidr=10.1.1.0/24 --apiserver-advertise-address <Ip_master_Machine>
@@ -74,6 +64,26 @@ cilium install
 All will be good if you obtain:
 
 ✅ Cilium was successfully installed! Run 'cilium status' to view installation health
+
+
+## Installation of Kubernetes inside the machines 
+
+If you have another machines with Centos or Red Hat with a version higher than 8 and do you like to test this Kubernetes, you can use this steps:
+
+```sh
+sudo yum install epel-release -y
+sudo yum install yum-utils -y
+sudo yum install ansible -y
+```
+
+Now you need to copy install-k8s.yml inside the machine. Then it's time to exec the ansible script:
+
+```sh
+sudo su
+ansible-playbook install.yml
+```
+
+Now Kubernetes is installed.
 
 
 

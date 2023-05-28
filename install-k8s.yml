@@ -1,9 +1,5 @@
 - hosts: localhost
   tasks:
-  - name: Set a hostname
-    ansible.builtin.hostname:
-      name: web01
-
   - name: Load cri-o repo
     shell: |
       VERSION=1.25

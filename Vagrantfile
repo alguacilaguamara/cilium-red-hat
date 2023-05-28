@@ -9,9 +9,10 @@ Vagrant.configure("2") do |config|
 
 		config.vm.define "node#{i}" do |node|
 			node.vm.box = "almalinux/9"
+			node.vm.hostname = "k8s-node#{i}"
 			node.vm.provider :libvirt do |libvirt|
-				libvirt.cpus = 4
-				libvirt.memory = 2048
+				libvirt.cpus = 8
+				libvirt.memory = 12288
 			end
 
 			node.vm.provision "shell", 

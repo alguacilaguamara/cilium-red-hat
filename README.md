@@ -7,38 +7,45 @@ In this repo you can find a simple vagrant script to test on AlmaLinux 9 (Based 
 
 ## Steps to install vagrant on Fedora
 
-```sudo dnf install @vagrant```
-```sudo dnf install vagrant-libvirt```
-```sudo vagrant plugin install vagrant-libvirt```
+```sh
+sudo dnf install @vagrant
+sudo dnf install vagrant-libvirt
+sudo vagrant plugin install vagrant-libvirt
+```
 Now you can start the nodes defined on the Vagranfile
 
-```sudo su```
-```vagrant up master```
-```vagrant up node1```
+```sh
+sudo su
+vagrant up
+```
 
-## Installation of Kubernetes inside the machines
+Now we can connect to node1 and node2
+```sh
+vagrant ssh node1
+```
 
-First step is connect via ssh with the machine. If you are using vagrant
-
-```vagrant ssh master```
-
-```sudo yum install epel-release -y```
-```sudo yum install yum-utils -y```
-```sudo yum install ansible -y```
-
-Now you need to copy install-k8s.yml inside the machine. Then it's time to exec the ansible script:
-
-```sudo su```
-```ansible-playbook install.yml```
-
+And in another terminal:
+```sh
+sudo su
+vagrant ssh node2
+```
 
 # Init Kubernetes and installation of cilium
 Time to initialize the Kubernetes. 
 Important: The --pod-network-cidr range used for Cilium is 10.1.1.0/24.
 
-```sudo kubeadm init --pod-network-cidr=10.1.1.0/24 --apiserver-advertise-address <Ip_master_Machine>```
+```sh
+sudo kubeadm init --pod-network-cidr=10.1.1.0/24 --apiserver-advertise-address <Ip_master_Machine>
+```
+When the command finishes, to start using your cluster, you need to run the following as a regular user:
 
-When the command is ended, copy the command kubeadm join in the nodes instances of kubernetes(In this machines you only need to install kubernetes using the steps defined on Installation of Kubernetes inside the machines)
+```sh
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+Also copy the command kubeadm join with sudo privileges in the nodes instances of kubernetes(In this machines you only need to install kubernetes using the steps defined on Installation of Kubernetes inside the machines)
 
 To finish, we need execute the script of cilium (More details in https://docs.cilium.io/en/v1.13/gettingstarted/k8s-install-default/)
 
@@ -60,7 +67,7 @@ And then:
 cilium install
 ```
 
-All will be good if you get:
+All will be good if you obtain:
 
 ✅ Cilium was successfully installed! Run 'cilium status' to view installation health
 

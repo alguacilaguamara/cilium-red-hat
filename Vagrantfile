@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
     			libvirt.memory = 2048
     		end
 	end
-	
+
 	config.vm.define "node1" do |node1|
     		node1.vm.box = "almalinux/9"
     		node1.vm.provider :libvirt do |libvirt|

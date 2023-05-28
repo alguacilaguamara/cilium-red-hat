@@ -1,5 +1,9 @@
 - hosts: localhost
   tasks:
+  - name: Set a hostname
+    ansible.builtin.hostname:
+      name: web01
+
   - name: Load cri-o repo
     shell: |
       VERSION=1.25
@@ -13,6 +17,12 @@
         - "cri-o"
         - "cri-tools"
       state: present
+
+  - name: Create kubernetes file
+    file:
+      path: /etc/yum.repos.d/kubernetes.repo
+      state: touch
+      mode: u=rw,g=r,o=r
 
   - name: Adding repository details in Kubernetes repo file.
     blockinfile:
@@ -33,6 +43,20 @@
         - kubelet
         - kubectl
       state: present
+
+  - name: Install versionlock
+    yum:
+      name:
+        - "python3-dnf-plugin-versionlock"
+      state: present
+
+  - name: Prevent Kubernetes packages from being updated
+    community.general.yum_versionlock:
+      state: present
+      name:
+      - kubelet*
+      - kubectl*
+      - kubeadm*
 
   - name: Start cri-o
     shell: |

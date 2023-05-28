@@ -31,11 +31,10 @@ Now you need to copy install-k8s.yml inside the machine. Then it's time to exec 
 ```sudo su```
 ```ansible-playbook install.yml```
 
-Now Kubernetes is installed.
 
 # Init Kubernetes and installation of cilium
 Time to initialize the Kubernetes. 
-The --pod-network-cidr range used for Cilium is 10.1.1.0/24.
+Important: The --pod-network-cidr range used for Cilium is 10.1.1.0/24.
 
 ```sudo kubeadm init --pod-network-cidr=10.1.1.0/24 --apiserver-advertise-address <Ip_master_Machine>```
 
@@ -64,6 +63,26 @@ cilium install
 All will be good if you get:
 
 ✅ Cilium was successfully installed! Run 'cilium status' to view installation health
+
+
+## Installation of Kubernetes inside the machines 
+
+If you have another machines with Centos or Red Hat with a version higher than 8 and do you like to test this Kubernetes, you can use this steps:
+
+```sh
+sudo yum install epel-release -y
+sudo yum install yum-utils -y
+sudo yum install ansible -y
+```
+
+Now you need to copy install-k8s.yml inside the machine. Then it's time to exec the ansible script:
+
+```sh
+sudo su
+ansible-playbook install.yml
+```
+
+Now Kubernetes is installed.
 
 
 
